@@ -1,0 +1,25 @@
+language: node_js
+
+node_js:
+  - "4"
+  - "6"
+
+matrix:
+  allow_failures:
+   - node_js: "6"
+
+#addons:
+  #apt:
+    #packages:
+      #- dh-make
+      #- devscripts
+      #- debhelper
+      #- git
+
+#services:
+ #- mongodb
+ #- rabbitmq
+script: "sudo $(which npm) test"
+
+after_success:
+ - ./extra/make-testcoveralls.sh

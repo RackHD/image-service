@@ -49,16 +49,38 @@ describe('inventory service', function () {
     before('setup config', function () {
         setupConfig();
         prepareTestInventoryFile();
+        setupFakeStatic();
         copyTestIsoToStore();
 
         inventory = helper.injector.get('Services.Inventory');
         db = helper.injector.get('Services.Database');
     });
 
-    after('restore config', function () {
+    after('restore config', function (done) {
         sandbox.restore();
         restoreConfig();
+        removeFakeStatic(done);
     });
+
+    function setupFakeStatic(){
+        fs.mkdirSync(fakeStaticDir);
+        fs.mkdirSync(fakeIsoDir);
+        fs.mkdirSync(fakeMKDir);
+    }
+
+    function removeFakeStatic(done) {
+        if (fs.statSync(fakeStaticDir)){
+            var rimraf = require('rimraf');
+            rimraf(fakeStaticDir, function(err){
+                if (err) {
+                    done(err);
+                }
+                else {
+                    done();
+                }
+            });
+        }
+    }
 
     function copyTestIsoToStore() {
         return fs.createReadStream(fakeIsoFile)

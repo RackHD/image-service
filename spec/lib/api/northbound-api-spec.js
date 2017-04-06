@@ -75,20 +75,6 @@ describe('northbound-api', function () {
         fs.writeFileSync(path.join(cwd, fakeInventoryFile), '{"images": []}');
     }
 
-    function clearDir(link){
-        var fileList = fs.readdirSync(link);
-        _.forEach(fileList, function(file){
-            fs.unlinkSync(
-                path.join(link, file)
-            );
-        });
-    }
-
-    function copyTestIsoToStore() {
-        return fs.createReadStream(fakeIsoFile)
-            .pipe(fs.createWriteStream(path.join(fakeIsoDir, '/test.iso'))) ;
-    }
-
     function getMicrokernelFiles(){
         return getFiles(fakeMKDirAbs);
     }
@@ -101,18 +87,29 @@ describe('northbound-api', function () {
         return fs.readdirSync(link);
     }
 
-    function clearMKFiles(){
-        clearDir(fakeMKDirAbs);
-    }
-
-    function clearIsoFiles() {
-        clearDir(fakeIsoDirAbs);
+    function setupFakeStatic(){
+        fs.mkdirSync(fakeStaticDir);
+        fs.mkdirSync(fakeIsoDir);
+        fs.mkdirSync(fakeMKDir);
     }
 
     function prepareDir() {
         setupInventoryFile();
-        clearIsoFiles();
-        clearMKFiles();
+        setupFakeStatic();
+    }
+
+    function removeFakeStatic(done) {
+        if (fs.statSync(fakeStaticDir)){
+            var rimraf = require('rimraf');
+            rimraf(fakeStaticDir, function(err){
+                if (err) {
+                    done(err);
+                }
+                else {
+                    done();
+                }
+            });
+        }
     }
 
     function verifyMicrokernelExistance(name) {
@@ -142,9 +139,10 @@ describe('northbound-api', function () {
         prepareDir();
     });
 
-    after('restore config', function () {
+    after('restore config', function (done) {
         restoreConfig();
         setupInventoryFile();
+        removeFakeStatic(done);
     });
 
     before('start HTTP server', function () {
@@ -172,14 +170,11 @@ describe('northbound-api', function () {
                 });
         });
 
-        it("should put one iso file with query in url", function (done) {
+        it("should put one iso file with query in url", function () {
 
             return helper.request(urlNorth).put('/iso?name=' + testIso.name)
                 .send(fs.readFileSync(fakeIsoFile, 'ascii'))
-                .expect(200)
-                .end(function () {
-                    done();
-                });
+                .expect(204);
         });
 
         it("should return one iso files", function () {
@@ -219,14 +214,11 @@ describe('northbound-api', function () {
                 });
         });
 
-        it("should put one microkernel file with query in url", function (done) {
+        it("should put one microkernel file with query in url", function () {
 
             return helper.request(urlNorth).put('/microkernel?name=' + testMicrokernel.name)
                 .send(fs.readFileSync(fakeMicrokernelFile, 'ascii'))
-                .expect(200)
-                .end(function () {
-                    done();
-                });
+                .expect(204);
         });
 
         it("should return one microkernel files", function () {
@@ -266,7 +258,7 @@ describe('northbound-api', function () {
                 });
         });
 
-        it("should put one Images file using isolocal", function (done) {
+        it("should put one Images file using isolocal", function () {
 
             this.timeout(5000);
 
@@ -274,7 +266,7 @@ describe('northbound-api', function () {
                 '&version=' + testImage.version + '&isolocal=' + fakeIsoFile)
                 .expect(200)
                 .set('Content-Type', 'application/json')
-                .end(function (err, res) {
+                .expect(function (res) {
                     var image = res.body;
                     expect(image.name).to.equal(testImage.name);
                     expect(image.version).to.equal(testImage.version);
@@ -282,8 +274,6 @@ describe('northbound-api', function () {
                     expect(image.iso).to.equal(testIso.name);
 
                     expect(verifyMountContent(testImage.name, testImage.version)).to.equal(true);
-
-                    done();
                 });
         });
 
@@ -308,32 +298,6 @@ describe('northbound-api', function () {
                     expect(res.body[0].name).to.equal(testImage.name);
                     expect(res.body[0].version).to.equal(testImage.version);
                 });
-        });
-
-        it("should put one Images file with using isoweb", function (done) {
-
-            this.timeout(5000);
-
-            copyTestIsoToStore();
-
-            return helper.request(urlNorth).put('/images?name=' + testImage.name +
-                '&version=' + testImage.version + '&isolocal=' + fakeIsoFile)
-                .expect(200)
-                .set('Content-Type', 'application/json')
-                .end(function (err, res) {
-                    var image = res.body;
-                    expect(image.name).to.equal(testImage.name);
-                    expect(image.version).to.equal(testImage.version);
-                    expect(image.status).to.equal('OK');
-                    expect(image.iso).to.equal(testIso.name);
-
-                    expect(verifyMountContent(testImage.name, testImage.version)).to.equal(true);
-
-                    clearIsoFiles();
-
-                    done();
-                });
-
         });
     });
 
