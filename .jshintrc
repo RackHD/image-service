@@ -62,7 +62,7 @@
         "dihelper",
         "expect",
         "helper",
-        "onHttpContext",
+        "onStaticContext",
         "Promise",
         "request",
         "should",
