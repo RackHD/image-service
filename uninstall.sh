@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # set -x
-
+# This script is used uninstallation
 NAME="image-service"
 SRC_DIR=`pwd`
 APP_DIR="/var/$NAME"
