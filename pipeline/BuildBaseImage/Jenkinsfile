@@ -1,0 +1,42 @@
+node{
+    timestamps{
+        deleteDir()
+        checkout(
+        [$class: 'GitSCM', branches: [[name: 'master']],
+        extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'on-build-config']],
+        userRemoteConfigs: [[url: 'https://github.com/RackHD/on-build-config']]])
+
+        def shareMethod = load("on-build-config/jobs/ShareMethod.groovy")
+        def label_name = "smoke_test"
+        lock(label:label_name,quantity:1){
+            node_name = shareMethod.occupyAvailableLockedResource(label_name, [])
+            node(node_name){
+                deleteDir()
+                checkout scm
+                stage("build base image"){
+                    withCredentials([
+                        usernamePassword(credentialsId: 'ff7ab8d2-e678-41ef-a46b-dd0e780030e1',
+                                         passwordVariable: 'SUDO_PASSWORD',
+                                         usernameVariable: 'SUDO_USER'),
+                        usernamePassword(credentialsId: 'rackhd-ci-docker-hub',
+                             passwordVariable: 'DOCKERHUB_PASS',
+                             usernameVariable: 'DOCKERHUB_USER')
+                    ]){
+                        sh """#!/bin/bash -x
+                        echo $SUDO_PASSWORD |sudo -S docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
+                        pushd $WORKSPACE/pipeline/BuildBaseImage
+                        echo $SUDO_PASSWORD |sudo -S docker build -t pipeline/image-service-base .
+                        popd
+                        pushd $WORKSPACE
+                        echo $SUDO_PASSWORD |sudo -S docker save -o image_service_pipeline_docker.tar pipeline/image-service-base
+                        echo $SUDO_PASSWORD |sudo -S chown $USER:$USER image_service_pipeline_docker.tar
+                        popd
+                        """
+                        archiveArtifacts 'image_service_pipeline_docker.tar'
+                    }
+                }
+            }
+        }
+    }
+}
+
