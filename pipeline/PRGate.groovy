@@ -1,8 +1,6 @@
 node{
     timestamps{
         deleteDir()
-        def pull_id = env.ghprbPullLink.tokenize('/')[-1];
-        currentBuild.description = "<a href=${env.ghprbPullLink}> PR #${pull_id}: ${ghprbPullTitle}</a>";
 
         checkout(
         [$class: 'GitSCM', branches: [[name: 'master']],
@@ -10,7 +8,7 @@ node{
         userRemoteConfigs: [[url: 'https://github.com/RackHD/on-build-config']]])
         String library_dir="$WORKSPACE/on-build-config"
 
-        shareMethod = load("on-build-config/jobs/ShareMethod.groovy")
+        shareMethod = load("$library_dir/jobs/ShareMethod.groovy")
 
         try{
             String repo_dir = ""
@@ -28,7 +26,7 @@ node{
             
             stage("FunctionTest"){
                 function_test = load("$repo_dir/pipeline/FunctionTest.groovy")
-                function_test.runTest(library_dir)
+                function_test.runTest(library_dir, "image-service/BuildBaseImage", "image_service_pipeline_docker.tar")
             }
             currentBuild.result="SUCCESS"
             

@@ -1,4 +1,7 @@
 def runTest(String library_dir){
+    if (! fileExists("$library_dir/jobs/ShareMethod.groovy")){
+        error("$library_dir/jobs/ShareMethod.groovy doesn't exist")
+    }
     def shareMethod = load("$library_dir/jobs/ShareMethod.groovy")
     String label_name="unittest"
     lock(label:label_name,quantity:1){

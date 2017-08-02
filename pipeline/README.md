@@ -7,7 +7,7 @@ Currently, there are 2 pipelines:
 
 Copyright 2017, DELLEMC, Inc.
 
-## Build Base Image
+## Build Base Image (optional)
 
 *The entry point of BuildBaseImage: pipeline/BuildBaseImage/Jenkinsfile*
 

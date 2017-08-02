@@ -102,7 +102,7 @@ dockerUp(){
     mkdir -p  $WORKSPACE/build-logs
     pushd $REPO_DIR
     echo $SUDO_PASSWORD |sudo -S docker build -t $DOCKER_NAME .
-    echo $SUDO_PASSWORD |sudo -S docker run --privileged --net=host -v /etc/localtime:/etc/localtime:ro -t $DOCKER_NAME > $WORKSPACE/build-logs/image-service.log &
+    echo $SUDO_PASSWORD |sudo -S docker run --rm --privileged --net=host -v /etc/localtime:/etc/localtime:ro -t $DOCKER_NAME > $WORKSPACE/build-logs/image-service.log &
     popd
     echo "*****************************************************************************************************"
     echo "End to build and run image service docker"
