@@ -378,6 +378,28 @@ After starting image service, users can open it via http://<image-server-ip>:707
 
 Unit test coverage report can be found at ./coverage
 
+### One Approach To Run Image Service API Related Case in FIT From Scratch
+```
+WORKSPACE=`pwd`
+# Get latest image-service code and FIT code from git hub
+git clone https://github.com/RackHD/image-service.git
+git clone https://github.com/RackHD/RackHD.git
+
+pushd image-service
+# Cleanup environment for test
+./deploy.sh cleanUp -w $WORKSPACE -p $SUDO_PASSWORD -d $WORKSPACE/image-service
+
+# Deploy image service docker container
+./deploy.sh deploy -w $WORKSPACE -p $SUDO_PASSWORD -d $WORKSPACE/image-service
+popd
+
+# Run smoke test with $WORKSPACE/image-service
+pushd RackHD/test
+./runFIT.sh -g "-test tests/imageserver -group imageservice -extra imageservice_config.json" -w $WORKSPACE -p $SUDO_PASSWORD
+popd
+```
+
+
 ## Contributions are welcome
 
 This feature is done  by Ted Chen(Huaqi, Chen), and the initial commit is forked from his repo: https://github.com/cgx027/on-static
