@@ -1,5 +1,7 @@
 # image-service
 
+_Copyright 2015-2016, EMC, Inc._
+
 ## Introduction
 
 image-service is a tool that help RackHD users to manage static file resources like os images and microkernel images. It is very convenient for users to create their OS image server when installing various OSes through RackHD comparing to original method.
@@ -403,5 +405,12 @@ popd
 ## Contributions are welcome
 
 This feature is done  by Ted Chen(Huaqi, Chen), and the initial commit is forked from his repo: https://github.com/cgx027/on-static
-_Copyright 2015-2016, EMC, Inc._
+
+## Licensing
+
+Licensed under the Apache License, Version 2.0 (the “License”); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+RackHD is a Trademark of Dell EMC
 
