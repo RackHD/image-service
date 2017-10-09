@@ -16,7 +16,7 @@ helper.setupInjector(_.flattenDeep([
     onStaticContext.injectables
 ]));
 
-// Suppress console log in unit test
+// To suppress console log in unit test
 helper.injector.get('Services.Configuration')
     .set('minLogLevel', 0);
 
