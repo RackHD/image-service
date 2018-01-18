@@ -39,7 +39,7 @@ npm install
 sudo node index.js
 ```
 
-By default, the northbound API listens at 0.0.0.0:7070, and the southbound listens at 0.0.0.0:9090. Those IP addresses and ports are user configurable.
+By default, the northbound API listens at 0.0.0.0:7070, and the southbound listens at 0.0.0.0:8060. Those IP addresses and ports are user configurable.
 
 You can also run it as a Linux service. Install the service:
 
