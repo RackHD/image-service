@@ -30,7 +30,7 @@
     "nconf": "^0.7.1",
     "node-uuid": "^1.4.2",
     "serve-index": "^1.7.2",
-    "validator": "^5.2.0",
+    "validator": "^6.2.0",
     "resolve": "^1.0.0",
     "lowdb": "^0.14.0",
     "axios": "^0.15.3",
@@ -39,7 +39,6 @@
     "bootstrap": "^3.3.7",
     "bootstrap-vue": "0.3.10",
     "vuestrap-base-components": "^0.8.10",
-    "validator": "^6.2.0",
     "debounce": "^1.0.0"
   },
   "devDependencies": {
